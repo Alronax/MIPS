@@ -50,9 +50,14 @@ void recupInstruction(char tab[],char nomFichierSource[],char nomFichierCible[])
 
 void recupNb(int *r, char registre[], char tab[], int* i){
   int l = 0;
+  int flag = 0;
 
     while ((tab[*i] != ',' && tab[*i] != '\n') ){/*parcours tab pour prendre le prochain nombre*/
-      if(tab[*i] != '$' && tab[*i] != ' '){
+      if(tab[*i] == '#'){
+        flag = 1;
+      }
+
+      if(flag == 0 && tab[*i] != '$' && tab[*i] != ' '){
           registre[l] = tab[*i];
           l++;
       }
