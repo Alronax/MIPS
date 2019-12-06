@@ -7,6 +7,9 @@
 #include "fonction.h"
 
 int main(){
+
+translateToHexa("test.txt","testDecode.txt");
+
 /*
   int r = -1;
   char registre[10] = {0};
@@ -19,6 +22,6 @@ int main(){
   printf("%c\n",registre[2]);
   printf("%c\n",registre[3]);
   printf("%c\n",registre[4]);*/
-  translateToHexa("test.txt","testDecode.txt");
+
   return 0;
 }

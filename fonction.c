@@ -16,7 +16,7 @@ void selectOpCode(char tab[],char opCode[], int* i){
   }
 }
 
-int d2b (int ent,int taille){/*prend pas en compte taille*/
+int d2b (int ent,int* ptaille){/*prend pas en compte taille*/
 	int reste;
 	int resultat = 0;
   int i = 0;
@@ -26,48 +26,40 @@ int d2b (int ent,int taille){/*prend pas en compte taille*/
 		ent = ent/2;
 		resultat += reste * pow(10,i);
     i++;
+    *ptaille = *ptaille + 1;
 	}
     return resultat;
 }
 
-void recupInstruction(char tab[],char nomFichierSource[],char nomFichierCible[]){
-  FILE* fichierSource = NULL;
+void recupInstruction(char tab[],FILE* fichierSource){
   int i = 0;
-
-  fichierSource = fopen(nomFichierSource, "r+");
-  if(fichierSource == NULL) {
-    perror("Probleme ouverture fichier");
-    exit(1);
-  }
-
   while(tab[i-1] != '\n') {/*enregistre une instruction entiere dans tab*/
     fscanf(fichierSource, "%c", &tab[i]);
     i++;
   }
   tab[i+1] = '\0';
-  fclose (fichierSource);
 }
 
-void recupNb(int *r, char registre[], char tab[], int* i){
+void recupNb(int *r, char registre[], char tab[], int* i,int* ptaille){
   int l = 0;
   int flag = 0;
 
-    while ((tab[*i] != ',' && tab[*i] != '\n') ){/*parcours tab pour prendre le prochain nombre*/
-      if(tab[*i] == '#'){
-        flag = 1;
-      }
-
-      if(flag == 0 && tab[*i] != '$' && tab[*i] != ' '){
-          registre[l] = tab[*i];
-          l++;
-      }
-      *i = *i + 1;
-    }
-      *r = atoi(registre);/*transforme en int le string*//*!!marche pas*/
-      *r = d2b(*r,10);/*!!! changer taille*/
+  while ((tab[*i] != ',' && tab[*i] != '\n') ){/*parcours tab pour prendre le prochain nombre*/
+    if(tab[*i] == '#'){
+      flag = 1;
     }
 
-void translateToHexa(char nomFichierSource[],char nomFichierCible[]){
+    if(flag == 0 && tab[*i] != '$' && tab[*i] != ' '){
+        registre[l] = tab[*i];
+        l++;
+    }
+    *i = *i + 1;
+  }
+    *r = atoi(registre);/*transforme en int le string*//*!!marche pas*/
+    *r = d2b(*r,ptaille);/*!!! changer taille*/
+  }
+
+void translateToHexaLine(FILE* fichierSource){
   char tab[100] = {0};
   int i = 0;
   int j = 0;
@@ -77,8 +69,10 @@ void translateToHexa(char nomFichierSource[],char nomFichierCible[]){
   int r1 = -1;
   int r2 = -1;
   int r3 = -1;
+  int taille = 0;
 
-  recupInstruction(tab,nomFichierSource,nomFichierCible);
+  recupInstruction(tab,fichierSource);
+
   selectOpCode(tab,opCode,&i);
 
   while (strcmp(opCode,TopCode[j]) != 0){/*trouve opCode dans tableau opcode*/
@@ -87,20 +81,63 @@ void translateToHexa(char nomFichierSource[],char nomFichierCible[]){
   numopCode = j;
 
   while (tab[i] != '\0'){/*enregistre les nombre dans les registres 1,2 et 3*/
-    if(r1 == -1){recupNb(&r1,registre,tab,&i);}
-    else if(r2 == -1){recupNb(&r2,registre,tab,&i);}
-    else if(r3 == -1) {recupNb(&r3,registre,tab,&i);}
+    if(r1 == -1){recupNb(&r1,registre,tab,&i,&taille);}
+
+    else if(r2 == -1){recupNb(&r2,registre,tab,&i,&taille);}
+    else if(r3 == -1) {recupNb(&r3,registre,tab,&i,&taille);}
     i++;
+  }
+
+  letterToNumber(r1,r2,r3,j,&taille);
+
+}
+
+void translateToHexa(char nomFichierSource[],char nomFichierCible[]){
+  FILE* fichierSource = NULL;
+
+  fichierSource = fopen(nomFichierSource, "r+");
+  if(fichierSource == NULL) {
+    perror("Probleme ouverture fichier");
+    exit(1);
+  }
+  translateToHexaLine(fichierSource);
+
+  fclose (fichierSource);
+}
+
+void replace(int nb, int* ptaille,int lastLetter, char letter,char* instructionBinaire[]){
+  int compteur = 0;
+  char operande[16] = "-1";
+
+  sprintf(operande , "%d" , nb);
+
+  while((*instructionBinaire[lastLetter-compteur] == letter) && (compteur <= *ptaille)){
+    *instructionBinaire[lastLetter-compteur] = operande[compteur];
+    compteur ++;
+  }
+  if(*instructionBinaire[lastLetter-compteur] == letter){
+    while(*instructionBinaire[lastLetter-compteur] == letter){
+      *instructionBinaire[lastLetter-compteur] = '0';
+    }
   }
 }
 
-void letterToNumber(int r1, int r2, int r3,int j){
-  if(Tequivalent[j][6] == 's'){
-    if(Tequivalent[j][11] == 't'){
-      if(Tequivalent[j][16] == 'd'){
-        /*remplacer*/
+void letterToNumber(int r1, int r2, int r3,int index, int* ptaille){
+  char* instructionBinaire[40];
+  int compteur = 0;
+  *instructionBinaire = "";
+
+  if(Tequivalent[index][6] == 's'){
+    if(Tequivalent[index][11] == 't'){
+      if(Tequivalent[index][16] == 'd'){
+        strcpy(*instructionBinaire,Tequivalent[index]);/*probleme*/
+
+        printf("1\n");
+        replace(r2,ptaille,10,'s',instructionBinaire);
+        replace(r3,ptaille,15,'t',instructionBinaire);
+        replace(r1,ptaille,20,'d',instructionBinaire);
       }
-      if(Tequivalent[j][16] == 'i' || Tequivalent[j][16] == 'o'){
+      if(Tequivalent[index][16] == 'i' || Tequivalent[index][16] == 'o'){
         /*replace*/
       }
       else{
@@ -108,33 +145,33 @@ void letterToNumber(int r1, int r2, int r3,int j){
       }
     }
     else{
-      if(Tequivalent[j][16] == 'o'){
+      if(Tequivalent[index][16] == 'o'){
         /*replace*/
       }
       else{
-        /*JR (hint)*/
+        /*jR (hint)*/
       }
     }
   }
   else{/*pas s*/
-    if(Tequivalent[j][11] == 't'){
-      if(Tequivalent[j][16] == 'd'){
+    if(Tequivalent[index][11] == 't'){
+      if(Tequivalent[index][16] == 'd'){
         /*replace t d sa*/
       }
-      if(Tequivalent[j][16] == 'o'){
+      if(Tequivalent[index][16] == 'o'){
         /*replace offset base*/
       }
       else{
         /*replace immediate*/
       }
     }
-    if(Tequivalent[j][16] == 'd'){
+    if(Tequivalent[index][16] == 'd'){
       /*replace*/
     }
-    if(Tequivalent[j][4] == '1'){/*instruction J ou JAL*/
+    if(Tequivalent[index][4] == '1'){/*instruction j ou jAL*/
       /*replace*/
     }
-    if(Tequivalent[j][28] == '0'){/*instruction NOP*/
+    if(Tequivalent[index][28] == '0'){/*instruction NOP*/
       /*replace*/
     }
     else{/*instruction SYSCALL*/
