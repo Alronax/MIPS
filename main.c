@@ -8,6 +8,7 @@
 
 int main(){
 
+
 translateToHexa("test.txt","testDecode.txt");
 
 /*

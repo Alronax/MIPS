@@ -56,7 +56,7 @@ void recupNb(int *r, char registre[], char tab[], int* i,int* ptaille){
     *i = *i + 1;
   }
     *r = atoi(registre);/*transforme en int le string*//*!!marche pas*/
-    *r = d2b(*r,ptaille);/*!!! changer taille*/
+    *r = d2b(*r,ptaille);
   }
 
 void translateToHexaLine(FILE* fichierSource){
@@ -105,37 +105,54 @@ void translateToHexa(char nomFichierSource[],char nomFichierCible[]){
   fclose (fichierSource);
 }
 
-void replace(int nb, int* ptaille,int lastLetter, char letter,char* instructionBinaire[]){
+void replace(int nb, int* ptaille,int lastLetter, char letter,char instructionBinaire[]){/*taille mauvaise*/
   int compteur = 0;
   char operande[16] = "-1";
 
   sprintf(operande , "%d" , nb);
 
-  while((*instructionBinaire[lastLetter-compteur] == letter) && (compteur <= *ptaille)){
-    *instructionBinaire[lastLetter-compteur] = operande[compteur];
+
+  while ((compteur < *ptaille) && (instructionBinaire[lastLetter - compteur] == letter)){
+    printf("%d\n", *taille - 1 - compteur );
+
+    instructionBinaire[lastLetter-compteur] = operande[*ptaille-1 -compteur];
+    printf("1\n");
     compteur ++;
   }
-  if(*instructionBinaire[lastLetter-compteur] == letter){
-    while(*instructionBinaire[lastLetter-compteur] == letter){
-      *instructionBinaire[lastLetter-compteur] = '0';
-    }
+
+
+
+  /*
+  while((instructionBinaire[lastLetter-compteur] == letter) && (compteur < *ptaille)){
+    instructionBinaire[lastLetter-compteur] = operande[*ptaille - compteur - 1];
+    compteur ++;
+
   }
+  if(instructionBinaire[lastLetter-compteur] == letter){
+    while(instructionBinaire[lastLetter-compteur] == letter){
+      instructionBinaire[lastLetter-compteur] = '0';
+      compteur ++;
+    }
+  }*/
 }
 
-void letterToNumber(int r1, int r2, int r3,int index, int* ptaille){
-  char* instructionBinaire[40];
+void letterToNumber(int r1, int r2, int r3,int index, int* ptaille){/*ptail est un pointeur vers la taille du nombre en binaire*/
+
+  char instructionBinaire[32];
   int compteur = 0;
-  *instructionBinaire = "";
 
   if(Tequivalent[index][6] == 's'){
     if(Tequivalent[index][11] == 't'){
       if(Tequivalent[index][16] == 'd'){
-        strcpy(*instructionBinaire,Tequivalent[index]);/*probleme*/
-
-        printf("1\n");
+        strcpy(instructionBinaire,Tequivalent[index]);
+        printf("r2 = %d\n",r2);
         replace(r2,ptaille,10,'s',instructionBinaire);
+        for(compteur = 0;compteur<32;compteur ++){
+          printf("%c\n",instructionBinaire[compteur]);
+        }
         replace(r3,ptaille,15,'t',instructionBinaire);
         replace(r1,ptaille,20,'d',instructionBinaire);
+
       }
       if(Tequivalent[index][16] == 'i' || Tequivalent[index][16] == 'o'){
         /*replace*/
