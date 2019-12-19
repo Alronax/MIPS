@@ -48,9 +48,10 @@ int d2b (int ent){
 }
 
 /*recupere un nombre dans le tableau et le met dans le registre*/
-void recupNb(int *r, char registre[], char tab[], int* i){
+int recupNb( char registre[], char tab[], int* i){
   int l = 0;
   int flag = 0;
+  int r;
 
   while ((tab[*i] != ',' && tab[*i] != '\n') ){/*parcours tab pour prendre le prochain nombre*/
     if(tab[*i] == '#'){
@@ -63,8 +64,9 @@ void recupNb(int *r, char registre[], char tab[], int* i){
     }
     *i = *i + 1;
   }
-    *r = atoi(registre); /*transforme en int le string*/
-    *r = d2b(*r);
+    r = atoi(registre); /*transforme en int le string*/
+    r = d2b(r);
+    return r;
   }
 
 
@@ -72,17 +74,15 @@ void recupNb(int *r, char registre[], char tab[], int* i){
  jusqu'a ce que nb n'ait plus de nombres a mettre*/
 void replace(int nb, int lastLetter, char letter,char instructionBinaire[]){
   int compteur = 0;
-  char operande[16] = {"aaaaaaaaaaaaaaaa"};
+  char operande[16] = {""};
 
   sprintf(operande , "%d" , nb);
 
   while ((operande[compteur]!='\0') && (instructionBinaire[lastLetter - compteur] == letter)){
-
-
     instructionBinaire[lastLetter-compteur] = operande[strlen(operande)-1 -compteur];
+    printf("j'ecris %x a l emplacement %d\n",operande[strlen(operande)-1 -compteur]-'0',lastLetter-compteur);
     compteur ++;
   }
-
   if(instructionBinaire[lastLetter-compteur] == letter){
     while(instructionBinaire[lastLetter-compteur] == letter){
       instructionBinaire[lastLetter-compteur] = '0';
@@ -98,78 +98,15 @@ void writeInTab (int* tab){
   while (programmeDeci[compteur] == -1){
     compteur ++;
   }
+  compteur --;
   while (compteur2 < 8){
     programmeDeci[compteur + compteur2] = tab[compteur2];
     compteur2 ++;
   }
-  printf("fin\n");
+
 }
 
-/*remplit les lettres de notre instruction de Tequivalent avec les registres correspondants puis met cette instruction en decimal dans programmeDeci*/
-void letterToNumber(int r1, int r2, int r3,int index){
-  int instructionDeci[8] = {0};
-  char instructionBinaire[32] = {"00000000000000000000000000000000"};
 
-  int compteur = 0;
-
-  if(Tequivalent[index][6] == 's'){
-    if(Tequivalent[index][11] == 't'){
-      if(Tequivalent[index][16] == 'd'){
-        strcpy(instructionBinaire,Tequivalent[index]);
-        replace(r2,10,'s',instructionBinaire);
-        replace(r3,15,'t',instructionBinaire);
-        replace(r1,20,'d',instructionBinaire);
-      }
-      if(Tequivalent[index][16] == 'i' || Tequivalent[index][16] == 'o'){
-        /*replace*/
-      }
-      else{
-        /*remplacer*/
-      }
-    }
-    else{
-      if(Tequivalent[index][16] == 'o'){
-        /*replace*/
-      }
-      else{
-        /*jR (hint)*/
-      }
-    }
-  }
-  else{/*pas s*/
-    if(Tequivalent[index][11] == 't'){
-      if(Tequivalent[index][16] == 'd'){
-        /*replace t d sa*/
-      }
-      if(Tequivalent[index][16] == 'o'){
-        /*replace offset base*/
-      }
-      else{
-        /*replace immediate*/
-      }
-    }
-    if(Tequivalent[index][16] == 'd'){
-      /*replace*/
-    }
-    if(Tequivalent[index][4] == '1'){/*instruction j ou jAL*/
-      /*replace*/
-    }
-    if(Tequivalent[index][28] == '0'){/*instruction NOP*/
-      /*replace*/
-    }
-    else{/*instruction SYSCALL*/
-      /*replace*/
-    }
-  }
-  compteur = 0;
-  while(compteur < 8){
-    instructionDeci[compteur] = (instructionBinaire[compteur*4] - '0')*8 + (instructionBinaire[compteur*4 +1] - '0')*4 + (instructionBinaire[compteur*4+2] - '0')*2 +(instructionBinaire[compteur*4+3] - '0');
-    compteur ++;
-  }
-  printf("avant fin de letterToNumber\n");
-  writeInTab(instructionDeci);
-  printf("fin letterToNumber\n");
-}
 
 /*traduite en hexa une instruction et l'ecrit dans programmeDeci*/
 int translateToHexaLine(FILE* fichierSource){
@@ -182,6 +119,10 @@ int translateToHexaLine(FILE* fichierSource){
   int r2 = -1;
   int r3 = -1;
   int flag;
+  int instructionDeci[8] = {0};
+  char instructionBinaire[32] = {"00000000000000000000000000000000"};
+  int index;
+  int compteur;
 
   flag = recupInstruction(tab,fichierSource);
   if (flag == 1){
@@ -192,17 +133,83 @@ int translateToHexaLine(FILE* fichierSource){
     }
 
     while (tab[i] != '\0'){/*enregistre les nombre dans les registres 1,2 et 3*/
-      if(r1 == -1){recupNb(&r1,registre,tab,&i);}
+      if(r1 == -1){r1 = recupNb(registre,tab,&i);}
 
-      else if(r2 == -1){recupNb(&r2,registre,tab,&i);}
+      else if(r2 == -1){r2 = recupNb(registre,tab,&i);}
 
-      else if(r3 == -1) {recupNb(&r3,registre,tab,&i);}
+      else if(r3 == -1) {r3 = recupNb(registre,tab,&i);}
 
       i++;
     }
-printf("avant letterToNumber\n");
-    letterToNumber(r1,r2,r3,j);
-printf("apres letterToNumber\n");
+
+
+
+
+    index = j;
+    compteur = 0;
+
+    if(Tequivalent[index][6] == 's'){
+      if(Tequivalent[index][11] == 't'){
+        if(Tequivalent[index][16] == 'd'){
+          strcpy(instructionBinaire,Tequivalent[index]);
+          replace(r2,10,'s',instructionBinaire);
+          replace(r3,15,'t',instructionBinaire);
+          replace(r1,20,'d',instructionBinaire);
+          while (compteur<32){
+
+            printf("");
+          }
+        }
+        if(Tequivalent[index][16] == 'i' || Tequivalent[index][16] == 'o'){
+          /*replace*/
+        }
+        else{
+          /*remplacer*/
+        }
+      }
+      else{
+        if(Tequivalent[index][16] == 'o'){
+          /*replace*/
+        }
+        else{
+          /*jR (hint)*/
+        }
+      }
+    }
+    else{/*pas s*/
+      if(Tequivalent[index][11] == 't'){
+        if(Tequivalent[index][16] == 'd'){
+          /*replace t d sa*/
+        }
+        if(Tequivalent[index][16] == 'o'){
+          /*replace offset base*/
+        }
+        else{
+          /*replace immediate*/
+        }
+      }
+      if(Tequivalent[index][16] == 'd'){
+        /*replace*/
+      }
+      if(Tequivalent[index][4] == '1'){/*instruction j ou jAL*/
+        /*replace*/
+      }
+      if(Tequivalent[index][28] == '0'){/*instruction NOP*/
+        /*replace*/
+      }
+      else{/*instruction SYSCALL*/
+        /*replace*/
+      }
+    }
+    compteur = 0;
+
+    while(compteur < 8){
+      instructionDeci[compteur] = (instructionBinaire[compteur*4] - '0')*8 + (instructionBinaire[compteur*4 +1] - '0')*4 + (instructionBinaire[compteur*4+2] - '0')*2 +(instructionBinaire[compteur*4+3] - '0');
+      compteur ++;
+    }
+
+    writeInTab(instructionDeci);
+
   }
 
   return flag;
@@ -215,7 +222,6 @@ void translateToHexa(char nomFichierSource[],char nomFichierCible[]){
   FILE* fichierSource = NULL;
   FILE* fichierDestination = NULL;
   int flag = 1;
-
   fichierSource = fopen(nomFichierSource, "r+");
   if(fichierSource == NULL) {
     perror("Probleme ouverture fichier");
@@ -228,12 +234,10 @@ void translateToHexa(char nomFichierSource[],char nomFichierCible[]){
     exit(1);
   }
   while(flag){
-      printf("b\n");
     flag = translateToHexaLine(fichierSource);
 
   }
 
   fclose (fichierSource);
   fclose(fichierDestination);
-  printf("a\n");
 }

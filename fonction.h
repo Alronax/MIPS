@@ -1,5 +1,5 @@
 int translateToHexaLine(FILE* fichierSource);
-void recupNb(int *r, char registre[], char tab[], int* i);
+int recupNb(char registre[], char tab[], int* i);
 int recupInstruction(char tab[],FILE* fichierSource);
 void selectOpCode(char tab[],char opCode[],int*i);
 void letterToNumber(int r1, int r2, int r3,int index);
