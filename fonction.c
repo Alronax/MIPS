@@ -6,33 +6,8 @@
 #include "fonction.h"
 
 char TopCode [][10] = {"ADD","ADDI","AND","BEQ","BGTZ","BLEZ","BNE","DIV","J","JAL","JR","LUI","LW","MFHI","MFLO","MULT","NOP","OR","ROTR","SLL","SLT","SRL","SUB","SW","SYSCALL","XOR"};
-char Tequivalent [26][32] = {
-"000000ssssstttttddddd00000100000",
-"001000ssssstttttiiiiiiiiiiiiiiii",
-"000000ssssstttttddddd00000100100",
-"000100ssssstttttoooooooooooooooo",
-"000111sssss00000oooooooooooooooo",
-"000110sssss00000oooooooooooooooo",
-"000101ssssstttttoooooooooooooooo",
-"000000sssssttttt0000000000011010",
-"000010xxxxxxxxxxxxxxxxxxxxxxxxxx",
-"000011xxxxxxxxxxxxxxxxxxxxxxxxxx",
-"000000sssss0000000000hhhhh001000",
-"00111100000tttttiiiiiiiiiiiiiiii",
-"100011bbbbbtttttoooooooooooooooo",
-"0000000000000000ddddd00000010000",
-"0000000000000000ddddd00000010100",
-"000000sssssttttt0000000000011000",
-"00000000000000000000000000000000",
-"000000ssssstttttddddd00000100101",
-"00000000001tttttdddddaaaaa000010",
-"00000000000tttttdddddaaaaa000000",
-"000000ssssstttttddddd00000101010",
-"00000000000tttttdddddaaaaa000010",
-"000000ssssstttttddddd00000100010",
-"101011bbbbbtttttoooooooooooooooo",
-"000000cccccccccccccccccccc001100",
-"000000ssssstttttddddd00000100110"};/*arret a BLEZ*/
+char Tequivalent [][32] = {"000000ssssstttttddddd00000100000","001000ssssstttttiiiiiiiiiiiiiiii","000000ssssstttttddddd00000100100","000100ssssstttttoooooooooooooooo","000111sssss00000oooooooooooooooo","000110sssss00000oooooooooooooooo"};/*arret a BLEZ*/
+
 int programmeDeci [800] = {0};
 int global_nombreLigne = 0;
 
@@ -166,67 +141,84 @@ int translateToHexaLine(FILE* fichierSource){
     }
 
     index = j;
-    printf("j = %d\n",j);
     compteur = 0;
 
-    if(Tequivalent[index][6] == 's'){
-      if(Tequivalent[index][11] == 't'){
-        if(Tequivalent[index][16] == 'd'){
-          strcpy(instructionBinaire,Tequivalent[index]);
-          replace(r2,10,'s',instructionBinaire);
-          replace(r3,15,'t',instructionBinaire);
-          replace(r1,20,'d',instructionBinaire);/*normalement instruction binaire est ok*/
+        if(Tequivalent[index][6] == 's'){
+          if(Tequivalent[index][11] == 't'){
+            if(Tequivalent[index][16] == 'd'){
+              strcpy(instructionBinaire,Tequivalent[index]);
+              replace(r2,10,'s',instructionBinaire);
+              replace(r3,15,'t',instructionBinaire);
+              replace(r1,20,'d',instructionBinaire);/*normalement instruction binaire est ok*/
 
 
+            }
+
+            else if(Tequivalent[index][16] == 'i' || Tequivalent[index][16] == 'o'){
+              strcpy(instructionBinaire,Tequivalent[index]);
+              replace(r2,10,'s',instructionBinaire);
+              replace(r1,15,'t',instructionBinaire);
+    		  /* gérer offset ou immediate*/
+            }
+
+            else{
+              strcpy(instructionBinaire,Tequivalent[index]);
+              replace(r2,10,'s',instructionBinaire);
+              replace(r1,15,'t',instructionBinaire);
+            }
+          }
+          else{/*pas de t*/
+            if(Tequivalent[index][16] == 'o'){
+              strcpy(instructionBinaire,Tequivalent[index]);
+              replace(r1,10,'s',instructionBinaire);
+    		  /* gérer offset */
+            }
+            else{
+              strcpy(instructionBinaire,Tequivalent[index]);
+              replace(r1,10,'s',instructionBinaire);
+    		  /* gérer hint*/
+            }
+          }
         }
-        if(Tequivalent[index][16] == 'i' || Tequivalent[index][16] == 'o'){
-          /*replace*/
+        else{/*pas s*/
+          if(Tequivalent[index][11] == 't'){
+            if(Tequivalent[index][16] == 'd'){
+              strcpy(instructionBinaire,Tequivalent[index]);
+              replace(r2,10,'t',instructionBinaire);
+              replace(r1,15,'d',instructionBinaire);
+              replace(r3,20,'a',instructionBinaire);
+            }
+            else if(Tequivalent[index][16] == 'o'){
+              strcpy(instructionBinaire,Tequivalent[index]);
+              replace(r2,10,'t',instructionBinaire);
+    		  /* gérer offset et base */
+            }
+            else{
+              strcpy(instructionBinaire,Tequivalent[index]);
+              replace(r2,10,'t',instructionBinaire);
+    		  /* gérer immediate */
+            }
+          }
+          else if(Tequivalent[index][16] == 'd'){
+            strcpy(instructionBinaire,Tequivalent[index]);
+              replace(r1,15,'d',instructionBinaire);
+          }
+          else if(Tequivalent[index][4] == '1'){/*instruction J ou JAL*/
+            /* gérer inst_index */
+          }
+          else if(Tequivalent[index][28] == '0'){/*instruction NOP*/
+          }
+          else{/*instruction SYSCALL*/
+            /*gérer code*/
+          }
         }
-        else{
-          /*remplacer*/
-        }
-      }
-      else{
-        if(Tequivalent[index][16] == 'o'){
-          /*replace*/
-        }
-        else{
-          /*jR (hint)*/
-        }
-      }
-    }
-    else{/*pas s*/
-      if(Tequivalent[index][11] == 't'){
-        if(Tequivalent[index][16] == 'd'){
-          /*replace t d sa*/
-        }
-        if(Tequivalent[index][16] == 'o'){
-          /*replace offset base*/
-        }
-        else{
-          /*replace immediate*/
-        }
-      }
-      if(Tequivalent[index][16] == 'd'){
-        /*replace*/
-      }
-      if(Tequivalent[index][4] == '1'){/*instruction j ou jAL*/
-        /*replace*/
-      }
-      if(Tequivalent[index][28] == '0'){/*instruction NOP*/
-        /*replace*/
-      }
-      else{/*instruction SYSCALL*/
-        /*replace*/
-      }
-    }
-    compteur = 0;    printf("cc\n");
+        
+    compteur = 0;
 
     while(compteur < 8){
       instructionDeci[compteur] = (instructionBinaire[compteur*4] - '0')*8 + (instructionBinaire[compteur*4 +1] - '0')*4 + (instructionBinaire[compteur*4+2] - '0')*2 +(instructionBinaire[compteur*4+3] - '0');
       compteur ++;
     }
-
     writeInTab(instructionDeci);
   }
   return flag;
@@ -254,10 +246,8 @@ void translateToHexa(char nomFichierSource[],char nomFichierCible[]){
   }
 
   while(flag){
-
     flag = translateToHexaLine(fichierSource);
     global_nombreLigne ++;
-
   }
   global_nombreLigne --;
 
