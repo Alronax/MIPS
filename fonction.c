@@ -6,13 +6,41 @@
 #include "fonction.h"
 
 char TopCode [][10] = {"ADD","ADDI","AND","BEQ","BGTZ","BLEZ","BNE","DIV","J","JAL","JR","LUI","LW","MFHI","MFLO","MULT","NOP","OR","ROTR","SLL","SLT","SRL","SUB","SW","SYSCALL","XOR"};
-char Tequivalent [][32] = {"000000ssssstttttddddd00000100000","001000ssssstttttiiiiiiiiiiiiiiii","000000ssssstttttddddd00000100100","000100ssssstttttoooooooooooooooo","000111sssss00000oooooooooooooooo","000110sssss00000oooooooooooooooo"};/*arret a BLEZ*/
-int programmeDeci [800] = {-1};
+char Tequivalent [26][32] = {
+"000000ssssstttttddddd00000100000",
+"001000ssssstttttiiiiiiiiiiiiiiii",
+"000000ssssstttttddddd00000100100",
+"000100ssssstttttoooooooooooooooo",
+"000111sssss00000oooooooooooooooo",
+"000110sssss00000oooooooooooooooo",
+"000101ssssstttttoooooooooooooooo",
+"000000sssssttttt0000000000011010",
+"000010xxxxxxxxxxxxxxxxxxxxxxxxxx",
+"000011xxxxxxxxxxxxxxxxxxxxxxxxxx",
+"000000sssss0000000000hhhhh001000",
+"00111100000tttttiiiiiiiiiiiiiiii",
+"100011bbbbbtttttoooooooooooooooo",
+"0000000000000000ddddd00000010000",
+"0000000000000000ddddd00000010100",
+"000000sssssttttt0000000000011000",
+"00000000000000000000000000000000",
+"000000ssssstttttddddd00000100101",
+"00000000001tttttdddddaaaaa000010",
+"00000000000tttttdddddaaaaa000000",
+"000000ssssstttttddddd00000101010",
+"00000000000tttttdddddaaaaa000010",
+"000000ssssstttttddddd00000100010",
+"101011bbbbbtttttoooooooooooooooo",
+"000000cccccccccccccccccccc001100",
+"000000ssssstttttddddd00000100110"};/*arret a BLEZ*/
+int programmeDeci [800] = {0};
+int global_nombreLigne = 0;
 
 /*recupere une instruction d'une ligne dans fichierSource et l'ecrit telle qu'elle dans tab*/
 int recupInstruction(char tab[],FILE* fichierSource){
   int i = 0;
   int flag = 1;
+
   while(tab[i-1] != '\n' && !feof(fichierSource)) {/*enregistre une instruction entiere dans tab*/
     fscanf(fichierSource, "%c", &tab[i]);
     i++;
@@ -94,14 +122,9 @@ void replace(int nb, int lastLetter, char letter,char instructionBinaire[]){
 /*ecrit une instruction decimal de 8 caracteres dans programmeDeci*/
 void writeInTab (int* tab){
   int compteur = 0;
-  int compteur2 = 0;
-  while (programmeDeci[compteur] == -1){
+  while (compteur < 8){
+    programmeDeci[global_nombreLigne*8 + compteur] = tab[compteur];
     compteur ++;
-  }
-  compteur --;
-  while (compteur2 < 8){
-    programmeDeci[compteur + compteur2] = tab[compteur2];
-    compteur2 ++;
   }
 
 }
@@ -142,10 +165,8 @@ int translateToHexaLine(FILE* fichierSource){
       i++;
     }
 
-
-
-
     index = j;
+    printf("j = %d\n",j);
     compteur = 0;
 
     if(Tequivalent[index][6] == 's'){
@@ -154,11 +175,9 @@ int translateToHexaLine(FILE* fichierSource){
           strcpy(instructionBinaire,Tequivalent[index]);
           replace(r2,10,'s',instructionBinaire);
           replace(r3,15,'t',instructionBinaire);
-          replace(r1,20,'d',instructionBinaire);
-          while (compteur<32){
+          replace(r1,20,'d',instructionBinaire);/*normalement instruction binaire est ok*/
 
-            printf("");
-          }
+
         }
         if(Tequivalent[index][16] == 'i' || Tequivalent[index][16] == 'o'){
           /*replace*/
@@ -201,7 +220,7 @@ int translateToHexaLine(FILE* fichierSource){
         /*replace*/
       }
     }
-    compteur = 0;
+    compteur = 0;    printf("cc\n");
 
     while(compteur < 8){
       instructionDeci[compteur] = (instructionBinaire[compteur*4] - '0')*8 + (instructionBinaire[compteur*4 +1] - '0')*4 + (instructionBinaire[compteur*4+2] - '0')*2 +(instructionBinaire[compteur*4+3] - '0');
@@ -209,11 +228,8 @@ int translateToHexaLine(FILE* fichierSource){
     }
 
     writeInTab(instructionDeci);
-
   }
-
   return flag;
-
 }
 
 /*traduit en hexa toutes les instructions
@@ -222,20 +238,38 @@ void translateToHexa(char nomFichierSource[],char nomFichierCible[]){
   FILE* fichierSource = NULL;
   FILE* fichierDestination = NULL;
   int flag = 1;
+  int compteur = 0;
+  int compteur2 = 0;
+
   fichierSource = fopen(nomFichierSource, "r+");
   if(fichierSource == NULL) {
     perror("Probleme ouverture fichier");
     exit(1);
   }
 
-  fichierDestination = fopen(nomFichierCible, "w+");
+  fichierDestination = fopen(nomFichierCible, "w");
   if(fichierDestination == NULL) {
     perror("Probleme ouverture fichier");
     exit(1);
   }
-  while(flag){
-    flag = translateToHexaLine(fichierSource);
 
+  while(flag){
+
+    flag = translateToHexaLine(fichierSource);
+    global_nombreLigne ++;
+
+  }
+  global_nombreLigne --;
+
+
+  while(compteur<global_nombreLigne){
+    compteur2 = 0;
+    while (compteur2 < 8){
+      fprintf(fichierDestination,"%x",programmeDeci[compteur*8 + compteur2]);
+      compteur2 ++;
+    }
+    fprintf(fichierDestination,"\n");
+    compteur ++;
   }
 
   fclose (fichierSource);
