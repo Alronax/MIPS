@@ -55,22 +55,21 @@ int recupNb( char registre[], char tab[], int* i){
   int l = 0;
   int flag = 0;
   int r;
+  while ((tab[*i] != ',' && tab[*i] != '\n' && tab[*i] != ')') ){/*parcours tab pour prendre le prochain nombre*/
+     if(tab[*i] == '#'){
+       flag = 1;
+     }
 
-  while ((tab[*i] != ',' && tab[*i] != '\n') ){/*parcours tab pour prendre le prochain nombre*/
-    if(tab[*i] == '#'){
-      flag = 1;
-    }
-
-    if(flag == 0 && tab[*i] != '$' && tab[*i] != ' '){
-        registre[l] = tab[*i];
-        l++;
-    }
-    *i = *i + 1;
-  }
-    r = atoi(registre); /*transforme en int le string*/
-    r = d2b(r);
-    return r;
-  }
+     if(flag == 0 && tab[*i] != '$' && tab[*i] != ' ' && tab[*i] != '('){
+         registre[l] = tab[*i];
+         l++;
+     }
+     *i = *i + 1;
+   }
+     r = atoi(registre); /*transforme en int le string*/
+     r = d2b(r);
+     return r;
+   }
 
 
 /*remplace dans instructionBinaire les caractere letter en partant de la derniere occurence de la lettre et va au debut
@@ -121,6 +120,9 @@ int translateToHexaLine(FILE* fichierSource){
   char instructionBinaire[32] = {"00000000000000000000000000000000"};
   int index;
   int compteur;
+  char instr_index = 0;
+  char hint = 0;
+  char code = 0;
 
   flag = recupInstruction(tab,fichierSource);
   if (flag == 1){
@@ -142,76 +144,82 @@ int translateToHexaLine(FILE* fichierSource){
 
     index = j;
     compteur = 0;
+    if(Tequivalent[index][6] == 's'){
+              if(Tequivalent[index][11] == 't'){
+                if(Tequivalent[index][16] == 'd'){
+                  strcpy(instructionBinaire,Tequivalent[index]);
+                  replace(r2,10,'s',instructionBinaire);
+                  replace(r3,15,'t',instructionBinaire);
+                  replace(r1,20,'d',instructionBinaire);/*normalement instruction binaire est ok*/
 
-        if(Tequivalent[index][6] == 's'){
-          if(Tequivalent[index][11] == 't'){
-            if(Tequivalent[index][16] == 'd'){
-              strcpy(instructionBinaire,Tequivalent[index]);
-              replace(r2,10,'s',instructionBinaire);
-              replace(r3,15,'t',instructionBinaire);
-              replace(r1,20,'d',instructionBinaire);/*normalement instruction binaire est ok*/
 
+                }
 
-            }
+                else if(Tequivalent[index][16] == 'o'){
+                  strcpy(instructionBinaire,Tequivalent[index]);
+                  replace(r2,10,'s',instructionBinaire);
+                  replace(r1,15,'t',instructionBinaire);
+        		      replace(r3,31,'o',instructionBinaire);
+                }
+                else if(Tequivalent[index][16] == 'i'){
+                  strcpy(instructionBinaire,Tequivalent[index]);
+                  replace(r2,10,'s',instructionBinaire);
+                  replace(r1,15,'t',instructionBinaire);
+    			        replace(r3,31,'i',instructionBinaire);
+                }
 
-            else if(Tequivalent[index][16] == 'i' || Tequivalent[index][16] == 'o'){
-              strcpy(instructionBinaire,Tequivalent[index]);
-              replace(r2,10,'s',instructionBinaire);
-              replace(r1,15,'t',instructionBinaire);
-    		  /* gérer offset ou immediate*/
+                else{
+                  strcpy(instructionBinaire,Tequivalent[index]);
+                  replace(r2,10,'s',instructionBinaire);
+                  replace(r1,15,'t',instructionBinaire);
+                }
+              }
+              else{/*pas de t*/
+                if(Tequivalent[index][16] == 'o'){
+                  strcpy(instructionBinaire,Tequivalent[index]);
+                  replace(r1,10,'s',instructionBinaire);
+        		  replace(r3,31,'o',instructionBinaire);
+                }
+                else{
+                  strcpy(instructionBinaire,Tequivalent[index]);
+                  replace(r1,10,'s',instructionBinaire);
+        		  replace(hint,25,'h',instructionBinaire); /* hint à récupérer par ailleurs*/
+                }
+              }
             }
-
-            else{
-              strcpy(instructionBinaire,Tequivalent[index]);
-              replace(r2,10,'s',instructionBinaire);
-              replace(r1,15,'t',instructionBinaire);
+            else{/*pas s*/
+              if(Tequivalent[index][11] == 't'){
+                if(Tequivalent[index][16] == 'd'){
+                  strcpy(instructionBinaire,Tequivalent[index]);
+                  replace(r2,15,'t',instructionBinaire);
+                  replace(r1,20,'d',instructionBinaire);
+                  replace(r3,25,'a',instructionBinaire);
+                }
+                else if(Tequivalent[index][16] == 'o'){
+                  strcpy(instructionBinaire,Tequivalent[index]);
+                  replace(r2,15,'t',instructionBinaire);
+        		  replace(r3,31,'o',instructionBinaire);
+    			  replace(r1,10,'b',instructionBinaire);
+                }
+                else{
+                  strcpy(instructionBinaire,Tequivalent[index]);
+                  replace(r1,15,'t',instructionBinaire);
+        		  replace(r2,31,'i',instructionBinaire);
+                }
+              }
+              else if(Tequivalent[index][16] == 'd'){
+                  strcpy(instructionBinaire,Tequivalent[index]);
+                  replace(r1,20,'d',instructionBinaire);
+              }
+              else if(Tequivalent[index][4] == '1'){/*instruction J ou JAL*/
+                replace(instr_index,31,'x',instructionBinaire);  /* instr_index à récupérer par ailleurs */
+              }
+              else if(Tequivalent[index][28] == '0'){/*instruction NOP*/
+              }
+              else{/*instruction SYSCALL*/
+                replace(code,25,'c',instructionBinaire); /* code à récupérer par ailleurs */
+              }
             }
-          }
-          else{/*pas de t*/
-            if(Tequivalent[index][16] == 'o'){
-              strcpy(instructionBinaire,Tequivalent[index]);
-              replace(r1,10,'s',instructionBinaire);
-    		  /* gérer offset */
-            }
-            else{
-              strcpy(instructionBinaire,Tequivalent[index]);
-              replace(r1,10,'s',instructionBinaire);
-    		  /* gérer hint*/
-            }
-          }
-        }
-        else{/*pas s*/
-          if(Tequivalent[index][11] == 't'){
-            if(Tequivalent[index][16] == 'd'){
-              strcpy(instructionBinaire,Tequivalent[index]);
-              replace(r2,10,'t',instructionBinaire);
-              replace(r1,15,'d',instructionBinaire);
-              replace(r3,20,'a',instructionBinaire);
-            }
-            else if(Tequivalent[index][16] == 'o'){
-              strcpy(instructionBinaire,Tequivalent[index]);
-              replace(r2,10,'t',instructionBinaire);
-    		  /* gérer offset et base */
-            }
-            else{
-              strcpy(instructionBinaire,Tequivalent[index]);
-              replace(r2,10,'t',instructionBinaire);
-    		  /* gérer immediate */
-            }
-          }
-          else if(Tequivalent[index][16] == 'd'){
-            strcpy(instructionBinaire,Tequivalent[index]);
-              replace(r1,15,'d',instructionBinaire);
-          }
-          else if(Tequivalent[index][4] == '1'){/*instruction J ou JAL*/
-            /* gérer inst_index */
-          }
-          else if(Tequivalent[index][28] == '0'){/*instruction NOP*/
-          }
-          else{/*instruction SYSCALL*/
-            /*gérer code*/
-          }
-        }
 
     compteur = 0;
 
