@@ -82,7 +82,6 @@ void replace(int nb, int lastLetter, char letter,char instructionBinaire[]){
 
   while ((operande[compteur]!='\0') && (instructionBinaire[lastLetter - compteur] == letter)){
     instructionBinaire[lastLetter-compteur] = operande[strlen(operande)-1 -compteur];
-    printf("j'ecris %x a l emplacement %d\n",operande[strlen(operande)-1 -compteur]-'0',lastLetter-compteur);
     compteur ++;
   }
   if(instructionBinaire[lastLetter-compteur] == letter){
@@ -102,8 +101,6 @@ void writeInTab (int* tab){
   }
 
 }
-
-
 
 /*traduite en hexa une instruction et l'ecrit dans programmeDeci*/
 int translateToHexaLine(FILE* fichierSource){
@@ -150,9 +147,7 @@ int translateToHexaLine(FILE* fichierSource){
                   strcpy(instructionBinaire,Tequivalent[index]);
                   replace(r2,10,'s',instructionBinaire);
                   replace(r3,15,'t',instructionBinaire);
-                  replace(r1,20,'d',instructionBinaire);/*normalement instruction binaire est ok*/
-
-
+                  replace(r1,20,'d',instructionBinaire);
                 }
 
                 else if(Tequivalent[index][16] == 'o'){
@@ -183,7 +178,7 @@ int translateToHexaLine(FILE* fichierSource){
                 else{
                   strcpy(instructionBinaire,Tequivalent[index]);
                   replace(r1,10,'s',instructionBinaire);
-        		  replace(hint,25,'h',instructionBinaire); /* hint à récupérer par ailleurs*/
+        		  replace(hint,25,'h',instructionBinaire);
                 }
               }
             }
@@ -212,12 +207,12 @@ int translateToHexaLine(FILE* fichierSource){
                   replace(r1,20,'d',instructionBinaire);
               }
               else if(Tequivalent[index][4] == '1'){/*instruction J ou JAL*/
-                replace(instr_index,31,'x',instructionBinaire);  /* instr_index à récupérer par ailleurs */
+                replace(instr_index,31,'x',instructionBinaire);
               }
               else if(Tequivalent[index][28] == '0'){/*instruction NOP*/
               }
               else{/*instruction SYSCALL*/
-                replace(code,25,'c',instructionBinaire); /* code à récupérer par ailleurs */
+                replace(code,25,'c',instructionBinaire);
               }
             }
 

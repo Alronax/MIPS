@@ -3,12 +3,13 @@
 #include<stdlib.h>
 #include<string.h>
 
-
+#include "memoire.h"
+#include "registres.h"
 #include "fonction.h"
 
 int main(){
 
-translateToHexa("in4.txt","testDecode.txt");
+translateToHexa("test.txt","testDecode.txt");
 
   return 0;
 }
