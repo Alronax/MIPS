@@ -3,6 +3,8 @@
 
 #include "memoire.h"
 
+int global_nbLignes;
+
 void writeProgram(int nombreLigne,unsigned char* programmeDeci) {
   int i;
   memoireProgramme = malloc((sizeof(char)*nombreLigne*4));
@@ -59,7 +61,28 @@ int depiler(){
 
 void reinitialisationMemoirePhys(int nombreLigne){
   int i;
+  global_nbLignes = nombreLigne;
   for(i=0;i < 1000 - nombreLigne;i++){
     memoirePhysique[i] = 0;
   }
+}
+
+void store (unsigned char val, int adresse){
+  if (adresse < 1000-global_nbLignes){
+    memoirePhysique[adresse] = val;
+  }
+  else{
+    printf("memoire pas assez grande\n");
+  }
+}
+
+unsigned char load (int adresse){
+  unsigned char val = 0;
+  if(adresse < 1000-global_nbLignes){
+    val = memoirePhysique[adresse];
+  }
+  else{
+    printf("acces memoire impossible\n");
+  }
+  return val;
 }
