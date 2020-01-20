@@ -9,10 +9,17 @@
 #include "fonction.h"
 
 int main(){
-  unsigned char valeur;
-  valeur = 0xac;
-  valeur = charToInverse(valeur);
+  int nombreLigne;
+  unsigned char* programmeDeci;
+
   translateToHexa("test.txt","testDecode.txt");
-  printf("%x",valeur);
+
+  nombreLigne = donneNombreInstruction();
+  programmeDeci = donnePointeurProgDeci();
+
+  reinitialisationMemoirePhys();
+  writeProgram(nombreLigne,programmeDeci);
+  afficherMemProg(nombreLigne);
+  reinitialiserProgram();
   return 0;
 }

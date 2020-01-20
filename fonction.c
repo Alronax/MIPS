@@ -8,7 +8,7 @@
 char TopCode [][50] = {"ADD","ADDI","AND","BEQ","BGTZ","BLEZ","BNE","DIV","J","JAL","JR","LUI","LW","MFHI","MFLO","MULT","NOP","OR","ROTR","SLL","SLT","SRL","SUB","SW","SYSCALL","XOR"};
 char Tequivalent [][50] = {"000000ssssstttttddddd00000100000","001000ssssstttttiiiiiiiiiiiiiiii","000000ssssstttttddddd00000100100","000100ssssstttttoooooooooooooooo","000111sssss00000oooooooooooooooo","000110sssss00000oooooooooooooooo","000101ssssstttttoooooooooooooooo","000000sssssttttt0000000000011010","000010xxxxxxxxxxxxxxxxxxxxxxxxxx","000011xxxxxxxxxxxxxxxxxxxxxxxxxx","000000sssss0000000000hhhhh001000","00111100000tttttiiiiiiiiiiiiiiii","100011bbbbbtttttoooooooooooooooo","0000000000000000ddddd00000010000","0000000000000000ddddd00000010100","000000sssssttttt0000000000011000","00000000000000000000000000000000","000000ssssstttttddddd00000100101","00000000001tttttdddddaaaaa000010","00000000000tttttdddddaaaaa000000","000000ssssstttttddddd00000101010","00000000000tttttdddddaaaaa000010","000000ssssstttttddddd00000100010","101011bbbbbtttttoooooooooooooooo","000000cccccccccccccccccccc001100","000000ssssstttttddddd00000100110"};
 
-int programmeDeci [800] = {0};
+unsigned char programmeDeci [800] = {0};
 int global_nombreLigne = 0;
 
 /*recupere une instruction d'une ligne dans fichierSource et l'ecrit telle qu'elle dans tab*/
@@ -267,4 +267,12 @@ void translateToHexa(char nomFichierSource[],char nomFichierCible[]){
 
   fclose (fichierSource);
   fclose(fichierDestination);
+}
+
+int donneNombreInstruction(){
+  return global_nombreLigne;
+}
+
+unsigned char* donnePointeurProgDeci(){
+  return programmeDeci;
 }

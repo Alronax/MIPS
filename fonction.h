@@ -7,3 +7,5 @@ int d2b (int ent);
 void replace(int nb,int lastLetter, char letter,char instructionBinaire[]);
 void translateToHexa(char nomFichierSource[],char nomFichierCible[]);
 void writeInTab (int* tab);
+int donneNombreInstruction();
+unsigned char* donnePointeurProgDeci();

@@ -3,11 +3,22 @@
 
 #include "memoire.h"
 
+void writeProgram(int nombreLigne,unsigned char* programmeDeci) {
+  int i;
+  memoireProgramme = malloc((sizeof(char)*nombreLigne*4));
+  for(i=0;i<nombreLigne*4;i++){
+    memoireProgramme[i] = (programmeDeci[2*i] << 4) + programmeDeci[2*i + 1];
+  }
+}
 
-void initialisationMemoire(){
-  int i = 0;
-  for(i=0;i<500;i++){
-    memoire[i] = 0;
+void reinitialiserProgram(){
+  free (memoireProgramme);
+}
+
+void afficherMemProg(int nombreLigne){
+  int i;
+  for(i=0;i<nombreLigne*4;i++){
+    printf("%x\n",memoireProgramme[i]);
   }
 }
 
@@ -44,4 +55,11 @@ int depiler(){
     val = 0;
   }
   return val;
+}
+
+void reinitialisationMemoirePhys(int nombreLigne){
+  int i;
+  for(i=0;i < 1000 - nombreLigne;i++){
+    memoirePhysique[i] = 0;
+  }
 }
