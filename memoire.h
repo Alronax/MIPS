@@ -14,3 +14,5 @@ void empiler(int val);
 int depiler();
 void reinitialisationMemoirePhys();
 void afficherMemProg(int nombreLigne);
+unsigned char load (int adresse);
+void store (unsigned char val, int adresse);
