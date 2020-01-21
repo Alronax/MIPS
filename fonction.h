@@ -1,3 +1,8 @@
+#ifndef __FONCTION__
+#define __FONCTION__
+
+
+
 int translateToHexaLine(FILE* fichierSource);
 int recupNb(char registre[], char tab[], int* i);
 int recupInstruction(char tab[],FILE* fichierSource);
@@ -9,3 +14,5 @@ void translateToHexa(char nomFichierSource[],char nomFichierCible[]);
 void writeInTab (int* tab);
 int donneNombreInstruction();
 unsigned char* donnePointeurProgDeci();
+
+#endif

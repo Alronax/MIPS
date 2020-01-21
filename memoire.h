@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 
-#define TAILLEMAX 4294967296 /*notre taille de mémoire physique est de 4294967296 octets*/
+#define TAILLEMAX 1000 /*notre taille de mémoire physique est de 4294967296 octets*/
 
 int pile [10];
 

@@ -4,7 +4,7 @@
 #include "registres.h"
 
 void resetRegisters(registres registers){
-  int compteur = 0;
+  int compteur;
   for(compteur = 0;compteur<32; compteur++){
     registers->registres_principaux[compteur] = 0;
   }
