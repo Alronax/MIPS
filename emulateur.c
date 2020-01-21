@@ -4,10 +4,10 @@
 
 #include "emulateur.h"
 
-/*traduit un char du decimal au binaire*/
-char char2b (char ent){
-	char reste;
-	char resultat = 0;
+/*
+unsigned char char2b (unsigned char ent){
+	unsigned char reste;
+	unsigned char resultat = 0;
   int i = 0;
 
 	while (ent != 0){
@@ -19,7 +19,8 @@ char char2b (char ent){
     return resultat;
 }
 
-char b2char (char binaire){
+
+unsigned char b2char (unsigned char binaire){
   int i;
   int resultat = 0;
   for (i=0;i<8;i++){
@@ -29,8 +30,8 @@ char b2char (char binaire){
   return resultat;
 }
 
-char charToInverse (char octet){
-  char resultat = 0;
+unsigned char charToInverse (unsigned char octet){
+  unsigned char resultat = 0;
   int i;
   octet = char2b(octet);
   for(i = 0;i < 8;i++){
@@ -40,4 +41,4 @@ char charToInverse (char octet){
   }
   resultat = b2char(resultat);
   return resultat;
-}
+}*/

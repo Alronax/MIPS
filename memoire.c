@@ -5,22 +5,23 @@
 
 int global_nbLignes;
 
-void writeProgram(int nombreLigne,unsigned char* programmeDeci) {
+void writeProgram(int nombreLigne,unsigned char* programmeDeci, char memoire [TAILLEMAX][2]) {
   int i;
-  memoireProgramme = malloc((sizeof(char)*nombreLigne*4));
+  int j;
   for(i=0;i<nombreLigne*4;i++){
-    memoireProgramme[i] = (programmeDeci[2*i] << 4) + programmeDeci[2*i + 1];
+    for(j=0;j<2;j++){
+      memoire[i][j] = programmeDeci[2*i + j];
+    }
   }
 }
 
-void reinitialiserProgram(){
-  free (memoireProgramme);
-}
-
-void afficherMemProg(int nombreLigne){
+void afficherMemProg(int nombreLigne, char memoire [TAILLEMAX][2]){
   int i;
+  int j;
   for(i=0;i<nombreLigne*4;i++){
-    printf("%x\n",memoireProgramme[i]);
+    for(j=0;j<2;j++){
+      printf("%x\n",memoire[i][j]);
+    }
   }
 }
 
@@ -59,27 +60,22 @@ int depiler(){
   return val;
 }
 
-void reinitialisationMemoirePhys(int nombreLigne){
-  int i;
-  global_nbLignes = nombreLigne;
-  for(i=0;i < 1000 - nombreLigne;i++){
-    memoirePhysique[i] = 0;
-  }
-}
-
-void store (unsigned char val, int adresse){
-  if (adresse < 1000-global_nbLignes){
-    memoirePhysique[adresse] = val;
+void store (int val, int offset, int adresse, char memoire [TAILLEMAX][2]){
+  if (adresse < TAILLEMAX-global_nbLignes){
+    memoire[adresse+offset][0] = val>>4;
+    memoire[adresse+offset][1] = val & 0x0f;
   }
   else{
     printf("memoire pas assez grande\n");
   }
 }
 
-unsigned char load (int adresse){
-  unsigned char val = 0;
-  if(adresse < 1000-global_nbLignes){
-    val = memoirePhysique[adresse];
+unsigned char load (int adresse, char memoire [TAILLEMAX][2]){
+  int val = 0;
+  if(adresse < TAILLEMAX-global_nbLignes){
+    val = memoire[adresse][0];
+    val <<= 4;
+    val += memoire[adresse][1];
   }
   else{
     printf("acces memoire impossible\n");

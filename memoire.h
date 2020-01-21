@@ -1,18 +1,13 @@
 #include <stdio.h>
 
-#define TAILLEMAX_M 1000 /*notre taille de mémoire physique est de 1000 octets*/
+#define TAILLEMAX 4294967296 /*notre taille de mémoire physique est de 4294967296 octets*/
 
 int pile [10];
-char* memoirePhysique;
 
-unsigned char* memoireProgramme;
-
-void writeProgram(int nombreLigne,unsigned char* programmeDeci);
-void reinitialiserProgram();
+void writeProgram(int nombreLigne,unsigned char* programmeDeci, char memoire [TAILLEMAX][2]);
 void initialisationPile();
 void empiler(int val);
 int depiler();
-void reinitialisationMemoirePhys();
-void afficherMemProg(int nombreLigne);
-unsigned char load (int adresse);
-void store (unsigned char val, int adresse);
+void afficherMemProg(int nombreLigne, char memoire [TAILLEMAX][2]);
+unsigned char load (int adresse, char memoire [TAILLEMAX][2]);
+void store (int val, int offset, int adresse, char memoire [TAILLEMAX][2]);

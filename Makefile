@@ -10,7 +10,7 @@ fonction.o: fonction.c fonction.h
 registres.o: registres.c registres.h
 	gcc -c registres.c -Wall -ansi -pedantic -o registres.o -g
 
-memoire.o: memoire.c memoire.h fonction.h
+memoire.o: memoire.c memoire.h
 	gcc -c memoire.c -Wall -ansi -pedantic -o memoire.o -g
 
 emulateur.o: emulateur.c emulateur.h

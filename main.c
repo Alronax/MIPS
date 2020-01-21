@@ -9,9 +9,13 @@
 #include "fonction.h"
 
 int main(){
+  registres registers;
+  char memoire [TAILLEMAX][2];
   int nombreLigne;
   unsigned char* programmeDeci;
+  unsigned char valeur = 0xa1;
 
+/*
   translateToHexa("test.txt","testDecode.txt");
 
   nombreLigne = donneNombreInstruction();
@@ -19,7 +23,6 @@ int main(){
 
   reinitialisationMemoirePhys();
   writeProgram(nombreLigne,programmeDeci);
-  afficherMemProg(nombreLigne);
-  reinitialiserProgram();
+  afficherMemProg(nombreLigne);*/
   return 0;
 }

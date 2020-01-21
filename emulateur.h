@@ -1,3 +1,3 @@
-char b2char (char binaire);
-char char2b (char ent);
-char charToInverse (char octet);
+unsigned char b2char (unsigned char binaire);
+unsigned char char2b (unsigned char ent);
+unsigned char charToInverse (unsigned char octet);
