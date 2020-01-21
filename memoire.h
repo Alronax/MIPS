@@ -1,3 +1,7 @@
+#ifndef __MEMORY__
+#define __MEMORY__
+
+
 #include <stdio.h>
 
 #define TAILLEMAX 4294967296 /*notre taille de mémoire physique est de 4294967296 octets*/
@@ -11,3 +15,5 @@ int depiler();
 void afficherMemProg(int nombreLigne, char memoire [TAILLEMAX][2]);
 unsigned char load (int adresse, char memoire [TAILLEMAX][2]);
 void store (int val, int offset, int adresse, char memoire [TAILLEMAX][2]);
+
+#endif

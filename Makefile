@@ -13,5 +13,5 @@ registres.o: registres.c registres.h
 memoire.o: memoire.c memoire.h
 	gcc -c memoire.c -Wall -ansi -pedantic -o memoire.o -g
 
-emulateur.o: emulateur.c emulateur.h
+emulateur.o: emulateur.c emulateur.h memoire.h registres.h fonction.h
 	gcc -c emulateur.c -Wall -ansi -pedantic -o emulateur.o -g
