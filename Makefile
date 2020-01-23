@@ -1,5 +1,5 @@
-main: main.o fonction.o registres.o memoire.o emulateur.o
-	gcc -o main main.o fonction.o registres.o memoire.o emulateur.o -lm -g
+emul-mips: main.o fonction.o registres.o memoire.o emulateur.o
+	gcc -o emul-mips main.o fonction.o registres.o memoire.o emulateur.o -lm -g
 
 main.o: main.c fonction.h registres.h memoire.h emulateur.h
 	gcc -c main.c -Wall -ansi -pedantic -o main.o -g

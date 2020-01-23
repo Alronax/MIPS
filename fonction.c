@@ -103,8 +103,8 @@ void writeInTab (int* tab){
 }
 
 /*traduite en hexa une instruction et l'ecrit dans programmeDeci*/
-int translateToHexaLine(FILE* fichierSource){
-  char tab[100] = {0};
+int translateToHexaLine(char tab[100],FILE* fichierSource){
+
   int i = 0;
   int j = 0;
   char opCode[10] = {0};
@@ -135,7 +135,6 @@ int translateToHexaLine(FILE* fichierSource){
       else if(r2 == -1){r2 = recupNb(registre,tab,&i);}
 
       else if(r3 == -1) {r3 = recupNb(registre,tab,&i);}
-
       i++;
     }
 
@@ -235,6 +234,10 @@ void translateToHexa(char nomFichierSource[],char nomFichierCible[]){
   int flag = 1;
   int compteur = 0;
   int compteur2 = 0;
+  char tab[100] = {0};
+  int i,j;
+
+  printf("*** Text segment loaded - Ready to execute ***\n");
 
   fichierSource = fopen(nomFichierSource, "r+");
   if(fichierSource == NULL) {
@@ -249,7 +252,7 @@ void translateToHexa(char nomFichierSource[],char nomFichierCible[]){
   }
 
   while(flag){
-    flag = translateToHexaLine(fichierSource);
+    flag = translateToHexaLine(tab,fichierSource);
     global_nombreLigne ++;
   }
   global_nombreLigne --;
@@ -263,6 +266,15 @@ void translateToHexa(char nomFichierSource[],char nomFichierCible[]){
     }
     fprintf(fichierDestination,"\n");
     compteur ++;
+  }
+
+  /*affichage*/
+  printf("\n*** code en hexadecimal ***\n");
+  for(i=0;i<global_nombreLigne;i++){
+    for(j=0;j<8;j++){
+      printf("%x",programmeDeci[i+j]);
+    }
+    printf("\n");
   }
 
   fclose (fichierSource);

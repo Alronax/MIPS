@@ -8,27 +8,36 @@
 #include "registres.h"
 #include "fonction.h"
 
-int main(){
+int main(int argc, char* argv[]){
+
+
+
   liste_registres liste;
   registres registers = &liste;
   char memoire [TAILLEMAX][2];
   int nombreLigne;
   unsigned char* programmeDeci;
 
-  translateToHexa("test.txt","testDecode.txt");
 
+  printf("          **** MIPS EMULATOR ****\nCS351 - LAURENT Mathieu GABILLET Théo\n\n");
+  printf("Assembling file : %s\noutput will be written in : testDecode.txt\n",argv[1]);
+
+
+  translateToHexa(argv[1],"testDecode.txt");
 
   nombreLigne = donneNombreInstruction();
   programmeDeci = donnePointeurProgDeci();
 
+
+
   initialisationPile();
   writeProgram(nombreLigne,programmeDeci,memoire);
-  afficherMemProg(nombreLigne,memoire);
 
   resetRegisters(registers);
-  registers->registres_principaux[2] = 4;
-  registers->registres_principaux[3] = 6;
-  execution (registers,memoire);
-  printf("reg 1 = %d\n",registers->registres_principaux[1]);
+  registers->registres_principaux[8] = 0x10000;
+  registers->registres_principaux[6] = 0x10001;
+  execution (nombreLigne,registers,memoire);
+  afficherRegistres(registers);
+  afficherMem(nombreLigne,memoire);
   return 0;
 }

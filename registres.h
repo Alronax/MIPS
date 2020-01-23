@@ -5,10 +5,10 @@
 typedef struct liste_registres liste_registres;
 
 struct liste_registres {
-int registres_principaux[32];
-int hi;
-int lo;
-int pc;
+unsigned long registres_principaux[32];
+unsigned long hi;
+unsigned long lo;
+unsigned long pc;
 };
 
 typedef liste_registres* registres;
@@ -21,5 +21,6 @@ void writeInHI (int val, registres registers);
 void writeInLO (int val, registres registers);
 void writeInPC (int val, registres registers);
 void incrementPC (registres registers);
+void afficherRegistres(registres registers);
 
 #endif

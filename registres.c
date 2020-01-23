@@ -33,3 +33,14 @@ void writeInPC (int val, registres registers){
 void incrementPC (registres registers){
   registers->pc += 4;
 }
+
+void afficherRegistres(registres registers){
+  int i;
+
+  printf("\n*** Final register states: ***\n");
+  for(i=0;i<32;i+=4){
+    printf("$%d: %lx      $%d: %lx      $%d: %lx      $%d: %lx\n",i,registers->registres_principaux[i],i+1,registers->registres_principaux[i+1],i+2,registers->registres_principaux[i+2],i+3,registers->registres_principaux[i+3]);
+  }
+  printf("HI : %lx\n",registers->hi);
+  printf("LO : %lx\n",registers->lo);
+}

@@ -15,13 +15,18 @@ void writeProgram(int nombreLigne,unsigned char* programmeDeci, char memoire [TA
   }
 }
 
-void afficherMemProg(int nombreLigne, char memoire [TAILLEMAX][2]){
+void afficherMem(int nombreLigne, char memoire [TAILLEMAX][2]){
   int i;
   int j;
-  for(i=0;i<nombreLigne*4;i++){
-    for(j=0;j<2;j++){
-      printf("%x\n",memoire[i][j]);
+
+  printf("\n*** Final memory state: ***\nAddress | Value\n");
+  for(i=0;i<=60;i+=4){
+    for(j=0;j<4;j++){
+      printf("@%d: %x%x%x%x%x%x%x%x     ",i,memoire[i][0],memoire[i][1],memoire[i+1][1],memoire[i+1][0],memoire[i+2][1],memoire[i+2][0],memoire[i+3][1],memoire[i+3][0]);
+      i+=4;
     }
+    i-=4;
+    printf("\n");
   }
 }
 

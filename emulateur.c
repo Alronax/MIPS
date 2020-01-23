@@ -11,9 +11,11 @@
 int b2d(int binaire){
 	int i;
 	int resultat = 0;
-	for (i=0;i<8;i++){
-		resultat += binaire%2 << i;
-		binaire >>= 1;
+	int inter = 0;
+	for (i=1;i<=32;i++){
+		inter = 0;
+		inter = (binaire / pow(10,32-i));
+		resultat = resultat * 2 + inter%2;
 	}
 	return resultat;
 }
@@ -26,27 +28,24 @@ int sb2d(int binaire){
 	return binaire;
 }
 
-void execution (registres registers, char memoire [TAILLEMAX][2]){
-	int pc = registers->pc;
-	int lo = registers->lo;
-	int hi = registers->hi;
-	char reg[32] ;
+void execution1Instr (registres registers, char memoire [TAILLEMAX][2]){
+	unsigned long pc = registers->pc;
+	unsigned long lo = registers->lo;
+	unsigned long hi = registers->hi;
+	unsigned long reg[32] ;
 	int target, i,s = 0, t = 0, d = 0, immediate = 0, index = 0, sa = 0, intermediaire;
 
 
 	for(i=0;i<32;i++){
 		reg[i] = registers->registres_principaux[i];
 	}
-	printf("reg2 = %d",reg[2]);
 	intermediaire = memoire[pc][1];
 
 	s = s + (intermediaire % 4)*8;
 	index = index + intermediaire * 16777216;
 
 	intermediaire = memoire[pc+1][0];
-printf("inter = %d\n",intermediaire);
 	s = s + (intermediaire / 2);
-	printf("s= %d\n",s);
 	t = t + (intermediaire % 2)*16;
 	index = index + intermediaire * 1048576;
 
@@ -84,7 +83,6 @@ printf("inter = %d\n",intermediaire);
 
 	/* if (immediate >= 32728){  */
 
-printf("mem = %x\n",memoire[pc+3][0]);
 
 	if (memoire[pc][0] == 0){
 
@@ -147,7 +145,6 @@ printf("mem = %x\n",memoire[pc+3][0]);
 			else if (memoire[pc+3][0] == 2){
 				/* ADD */
 				reg[d] = reg[s] + reg[t];
-				printf("reg s = %x\n",reg[s]);
 			}
 			else{
 				if (strcmp(memoire[pc+1],"00") == 0 || strcmp(memoire[pc+2],"00") == 0 || strcmp(memoire[pc+3],"00") == 0){
@@ -196,7 +193,6 @@ printf("mem = %x\n",memoire[pc+3][0]);
 		/* SW */
 	}
 	else{
-		printf("cc\n");
 		if (memoire[pc][1] < 4){
 			/* BEQ */
 			if (reg[s] == reg[t]){
@@ -232,47 +228,9 @@ printf("mem = %x\n",memoire[pc+3][0]);
 	incrementPC (registers);
 }
 
-
-
-
-
-
-
-/*
-unsigned char char2b (unsigned char ent){
-	unsigned char reste;
-	unsigned char resultat = 0;
-  int i = 0;
-
-	while (ent != 0){
-		reste = ent%2;
-		ent = ent/2;
-		resultat += reste * pow(10,i);
-    i++;
+void execution (int nbLigne,registres registers, char memoire [TAILLEMAX][2]){
+	int i = 0;
+	for(i=0;i<nbLigne;i++){
+		execution1Instr(registers, memoire );
 	}
-    return resultat;
 }
-
-
-unsigned char b2char (unsigned char binaire){
-  int i;
-  int resultat = 0;
-  for (i=0;i<8;i++){
-    resultat += binaire%2 << i;
-    binaire >>= 1;
-  }
-  return resultat;
-}
-
-unsigned char charToInverse (unsigned char octet){
-  unsigned char resultat = 0;
-  int i;
-  octet = char2b(octet);
-  for(i = 0;i < 8;i++){
-    resultat += octet%2;
-    octet <<= 1;
-    resultat >>= 1;
-  }
-  resultat = b2char(resultat);
-  return resultat;
-}*/

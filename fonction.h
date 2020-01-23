@@ -3,7 +3,7 @@
 
 
 
-int translateToHexaLine(FILE* fichierSource);
+int translateToHexaLine(char tab[100],FILE* fichierSource);
 int recupNb(char registre[], char tab[], int* i);
 int recupInstruction(char tab[],FILE* fichierSource);
 void selectOpCode(char tab[],char opCode[],int*i);
