@@ -55,12 +55,12 @@ int recupNb( char registre[], char tab[], int* i){
   int l = 0;
   int flag = 0;
   int r;
-  while ((tab[*i] != ',' && tab[*i] != '\n' && tab[*i] != ')') ){/*parcours tab pour prendre le prochain nombre*/
+  while ((tab[*i] != ',' && tab[*i] != '\n' && tab[*i] != ')' && tab[*i] != '(') ){/*parcours tab pour prendre le prochain nombre*/
      if(tab[*i] == '#'){
        flag = 1;
      }
 
-     if(flag == 0 && tab[*i] != '$' && tab[*i] != ' ' && tab[*i] != '('){
+     if(flag == 0 && tab[*i] != '$' && tab[*i] != ' ' && tab[*i] != '(' && tab[*i] != ')'){
          registre[l] = tab[*i];
          l++;
      }
@@ -191,14 +191,14 @@ int translateToHexaLine(char tab[100],FILE* fichierSource){
                 }
                 else if(Tequivalent[index][16] == 'o'){
                   strcpy(instructionBinaire,Tequivalent[index]);
-                  replace(r2,15,'t',instructionBinaire);
-        		  replace(r3,31,'o',instructionBinaire);
-    			  replace(r1,10,'b',instructionBinaire);
+                  replace(r1,15,'t',instructionBinaire);
+        		      replace(r2,31,'o',instructionBinaire);
+    			        replace(r3,10,'b',instructionBinaire);
                 }
                 else{
                   strcpy(instructionBinaire,Tequivalent[index]);
                   replace(r1,15,'t',instructionBinaire);
-        		  replace(r2,31,'i',instructionBinaire);
+        		      replace(r2,31,'i',instructionBinaire);
                 }
               }
               else if(Tequivalent[index][16] == 'd'){

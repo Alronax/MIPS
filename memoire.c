@@ -22,7 +22,7 @@ void afficherMem(int nombreLigne, char memoire [TAILLEMAX][2]){
   printf("\n*** Final memory state: ***\nAddress | Value\n");
   for(i=0;i<=60;i+=4){
     for(j=0;j<4;j++){
-      printf("@%d: %x%x%x%x%x%x%x%x     ",i,memoire[i][0],memoire[i][1],memoire[i+1][1],memoire[i+1][0],memoire[i+2][1],memoire[i+2][0],memoire[i+3][1],memoire[i+3][0]);
+      printf("@%d: %x%x%x%x%x%x%x%x     ",i,memoire[i][0],memoire[i][1],memoire[i+1][0],memoire[i+1][1],memoire[i+2][0],memoire[i+2][1],memoire[i+3][0],memoire[i+3][1]);
       i+=4;
     }
     i-=4;
@@ -65,22 +65,40 @@ int depiler(){
   return val;
 }
 
-void store (int val, int offset, int adresse, char memoire [TAILLEMAX][2]){
+void store (unsigned long val, int offset, unsigned long adresse, char memoire [TAILLEMAX][2]){
   if (adresse < TAILLEMAX-global_nbLignes){
-    memoire[adresse+offset][0] = val>>4;
-    memoire[adresse+offset][1] = val & 0x0f;
+  memoire[adresse+offset][0] = val >> 28;
+	memoire[adresse+offset][1] = (val >> 24) & 0x0000000f;
+	memoire[adresse+offset+1][0] = (val >> 20) & 0x0000000f;
+	memoire[adresse+offset+1][1] = (val >> 16) & 0x0000000f;
+	memoire[adresse+offset+2][0] = (val >> 12) & 0x0000000f;
+	memoire[adresse+offset+2][1] = (val >> 8) & 0x0000000f;
+	memoire[adresse+offset+3][0] = (val >> 4) & 0x0000000f;
+  memoire[adresse+offset+3][1] = val & 0x0000000f;
   }
   else{
     printf("memoire pas assez grande\n");
   }
 }
 
-unsigned char load (int adresse, char memoire [TAILLEMAX][2]){
-  int val = 0;
+unsigned char load (unsigned long adresse, int offset, char memoire [TAILLEMAX][2]){
+  unsigned long val = 0;
   if(adresse < TAILLEMAX-global_nbLignes){
-    val = memoire[adresse][0];
+    val = memoire[adresse+offset][0];
     val <<= 4;
-    val += memoire[adresse][1];
+    val += memoire[adresse+offset][1];
+	val <<= 4;
+    val += memoire[adresse+offset+1][0];
+	val <<= 4;
+    val += memoire[adresse+offset+1][1];
+	val <<= 4;
+    val += memoire[adresse+offset+2][0];
+	val <<= 4;
+    val += memoire[adresse+offset+2][1];
+	val <<= 4;
+    val += memoire[adresse+offset+3][0];
+	val <<= 4;
+    val += memoire[adresse+offset+3][1];
   }
   else{
     printf("acces memoire impossible\n");

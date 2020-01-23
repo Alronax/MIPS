@@ -13,19 +13,19 @@ void resetRegisters(registres registers){
   registers->pc = 0;
 }
 
-void writeInReg(int numberOfReg, int val, registres registers){
+void writeInReg(int numberOfReg,  unsigned long val, registres registers){
   registers->registres_principaux[numberOfReg] = val;
 }
 
-void writeInHI (int val, registres registers){
+void writeInHI (unsigned long val, registres registers){
   registers->hi = val;
 }
 
-void writeInLO (int val, registres registers){
+void writeInLO (unsigned long val, registres registers){
   registers->lo = val;
 }
 
-void writeInPC (int val, registres registers){
+void writeInPC (unsigned long val,registres registers){
   registers->pc = val;
 }
 

@@ -33,7 +33,7 @@ void execution1Instr (registres registers, char memoire [TAILLEMAX][2]){
 	unsigned long lo = registers->lo;
 	unsigned long hi = registers->hi;
 	unsigned long reg[32] ;
-	int target, i,s = 0, t = 0, d = 0, immediate = 0, index = 0, sa = 0, intermediaire;
+	int target,offset, i,s = 0, t = 0, d = 0, immediate = 0, index = 0, sa = 0, intermediaire;
 
 
 	for(i=0;i<32;i++){
@@ -81,8 +81,12 @@ void execution1Instr (registres registers, char memoire [TAILLEMAX][2]){
 	immediate = immediate + intermediaire;
 	index = index + intermediaire;
 
-	/* if (immediate >= 32728){  */
-
+	if (immediate >= 32728){
+			offset = immediate - 131072;
+		}
+		else{
+			offset = immediate;
+		}
 
 	if (memoire[pc][0] == 0){
 
@@ -188,9 +192,13 @@ void execution1Instr (registres registers, char memoire [TAILLEMAX][2]){
 	}
 	else if (memoire[pc][0] == 8){
 		/* LW */
+		reg[t] = load (reg[s], offset, memoire );
 	}
 	else if (memoire[pc][0] == 0xa){
 		/* SW */
+		printf("offset = %d",offset);
+		printf("reg[s] = %ld\n\n\n\n\n",reg[s]);
+		store (reg[t], offset, reg[s], memoire );
 	}
 	else{
 		if (memoire[pc][1] < 4){
